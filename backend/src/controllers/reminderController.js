@@ -2,7 +2,11 @@ const Reminder = require('../models/Reminder');
 const FriendRequest = require('../models/FriendRequest');
 const Notification = require('../models/Notification');
 
-// Get all personal reminders for the user
+/**
+ * @desc    Get all personal reminders for the user
+ * @route   GET /api/reminders
+ * @access  Private
+ */
 const getReminders = async (req, res) => {
   try {
     const reminders = await Reminder.find({ createdBy: req.user.id, isShared: false })
@@ -13,7 +17,11 @@ const getReminders = async (req, res) => {
   }
 };
 
-// Create personal reminder
+/**
+ * @desc    Create a personal reminder
+ * @route   POST /api/reminders
+ * @access  Private
+ */
 const createReminder = async (req, res) => {
   try {
     const { title, description, dateTime, alertBefore, repeat, category } = req.body;
@@ -35,7 +43,11 @@ const createReminder = async (req, res) => {
   }
 };
 
-// Update personal or shared reminder (creator only)
+/**
+ * @desc    Update a personal or shared reminder (only creator can update) and emit socket events if shared
+ * @route   PUT /api/reminders/:id
+ * @access  Private
+ */
 const updateReminder = async (req, res) => {
   try {
     const reminder = await Reminder.findById(req.params.id);
@@ -78,7 +90,11 @@ const updateReminder = async (req, res) => {
   }
 };
 
-// Delete reminder (creator only)
+/**
+ * @desc    Delete a reminder (creator only)
+ * @route   DELETE /api/reminders/:id
+ * @access  Private
+ */
 const deleteReminder = async (req, res) => {
   try {
     const reminder = await Reminder.findById(req.params.id);
@@ -98,7 +114,11 @@ const deleteReminder = async (req, res) => {
   }
 };
 
-// Complete a personal reminder
+/**
+ * @desc    Mark a personal reminder as completed
+ * @route   PATCH /api/reminders/:id/complete
+ * @access  Private
+ */
 const completeReminder = async (req, res) => {
   try {
     const reminder = await Reminder.findById(req.params.id);
@@ -120,7 +140,11 @@ const completeReminder = async (req, res) => {
   }
 };
 
-// Get shared reminders where user is a participant (shared with me)
+/**
+ * @desc    Get shared reminders where the current user is a participant
+ * @route   GET /api/reminders/shared/with-me
+ * @access  Private
+ */
 const getSharedWithMe = async (req, res) => {
   try {
     const reminders = await Reminder.find({
@@ -145,7 +169,11 @@ const getSharedWithMe = async (req, res) => {
   }
 };
 
-// Get shared reminders created by the user (shared by me)
+/**
+ * @desc    Get shared reminders created by the current user
+ * @route   GET /api/reminders/shared/by-me
+ * @access  Private
+ */
 const getSharedByMe = async (req, res) => {
   try {
     const reminders = await Reminder.find({
@@ -177,7 +205,11 @@ const getSharedByMe = async (req, res) => {
   }
 };
 
-// Create shared reminder
+/**
+ * @desc    Create a shared reminder and notify all participants via socket
+ * @route   POST /api/reminders/shared
+ * @access  Private
+ */
 const createSharedReminder = async (req, res) => {
   try {
     const { title, description, dateTime, alertBefore, repeat, category, participants } = req.body;
@@ -264,7 +296,11 @@ const createSharedReminder = async (req, res) => {
   }
 };
 
-// Participant accept shared reminder
+/**
+ * @desc    Accept a shared reminder as a participant
+ * @route   PATCH /api/reminders/shared/:id/accept
+ * @access  Private
+ */
 const acceptSharedReminder = async (req, res) => {
   try {
     const reminder = await Reminder.findOne({ _id: req.params.id, isShared: true, 'participants.userId': req.user.id });
@@ -306,7 +342,11 @@ const acceptSharedReminder = async (req, res) => {
   }
 };
 
-// Participant decline shared reminder
+/**
+ * @desc    Decline a shared reminder as a participant
+ * @route   PATCH /api/reminders/shared/:id/decline
+ * @access  Private
+ */
 const declineSharedReminder = async (req, res) => {
   try {
     const reminder = await Reminder.findOne({ _id: req.params.id, isShared: true, 'participants.userId': req.user.id });
@@ -348,7 +388,11 @@ const declineSharedReminder = async (req, res) => {
   }
 };
 
-// Participant mark as complete for themselves
+/**
+ * @desc    Mark a shared reminder as completed for a specific participant
+ * @route   PATCH /api/reminders/shared/:id/complete
+ * @access  Private
+ */
 const completeSharedParticipant = async (req, res) => {
   try {
     const reminder = await Reminder.findOne({ _id: req.params.id, isShared: true, 'participants.userId': req.user.id });
@@ -390,7 +434,11 @@ const completeSharedParticipant = async (req, res) => {
   }
 };
 
-// Get single reminder details
+/**
+ * @desc    Get details of a single reminder by ID
+ * @route   GET /api/reminders/:id
+ * @access  Private
+ */
 const getReminderById = async (req, res) => {
   try {
     const reminder = await Reminder.findById(req.params.id)

@@ -2,6 +2,11 @@ const FriendRequest = require('../models/FriendRequest');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 
+/**
+ * @desc    Search users by name or email (excluding self)
+ * @route   GET /api/friends/search
+ * @access  Private
+ */
 const searchUsers = async (req, res) => {
   try {
     const { query } = req.query;
@@ -28,6 +33,11 @@ const searchUsers = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Send a friend request to a user and emit real-time socket events
+ * @route   POST /api/friends/request
+ * @access  Private
+ */
 const sendFriendRequest = async (req, res) => {
   try {
     const { receiverId } = req.body;
@@ -87,6 +97,11 @@ const sendFriendRequest = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get all pending friend requests for the current user
+ * @route   GET /api/friends/requests
+ * @access  Private
+ */
 const getFriendRequests = async (req, res) => {
   try {
     // Requests sent to me
@@ -100,6 +115,11 @@ const getFriendRequests = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Accept a friend request and notify the sender via socket
+ * @route   PATCH /api/friends/requests/:id/accept
+ * @access  Private
+ */
 const acceptRequest = async (req, res) => {
   try {
     const request = await FriendRequest.findOne({ _id: req.params.id, receiver: req.user.id });
@@ -147,6 +167,11 @@ const acceptRequest = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Reject a friend request
+ * @route   PATCH /api/friends/requests/:id/reject
+ * @access  Private
+ */
 const rejectRequest = async (req, res) => {
   try {
     const request = await FriendRequest.findOne({ _id: req.params.id, receiver: req.user.id });
@@ -170,6 +195,11 @@ const rejectRequest = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Get all accepted friends for the current user
+ * @route   GET /api/friends
+ * @access  Private
+ */
 const getFriends = async (req, res) => {
   try {
     const friendships = await FriendRequest.find({
@@ -193,6 +223,11 @@ const getFriends = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Remove a friend by deleting the accepted friend request
+ * @route   DELETE /api/friends/:id
+ * @access  Private
+ */
 const removeFriend = async (req, res) => {
   try {
     const friendId = req.params.id;
